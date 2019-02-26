@@ -1,0 +1,69 @@
+{
+  "log": {
+    "debug": true
+  },
+  "node": {
+    "id": "1F01011F000100000000000004",
+    "ip": "10.31.124.154"
+  },
+  "http": {
+    "listen": "0.0.0.0:18080"
+  },
+  "db": {
+    "host": "10.31.124.154",
+    "dbName": "tollsyshc",
+    "user": "sa",
+    "pwd": "searitollsys",
+    "maxPoolSize": 20
+  },
+  "redis": {
+    "connectType": "tcp",
+    "host": "10.31.124.154:6379",
+    "maxPoolSize": 20
+  },
+  "monitor": {
+    "host": "0.0.0.0",
+    "port": 7800
+  },
+  "websocket": {
+    "listen": "0.0.0.0:18081"
+  },
+  "session": {
+    "cookieName": "tollsys-tollmon-cookie",
+    "maxAge": 30
+  },
+  "coredata": {
+    "list": {
+      "LaneStart": 3,
+      "SendStatus.OndutyRecord": 18,
+      "SendStatus.EnOffdutyRecord": 19,
+      "SendStatus.ExOffdutyRecord": 20,
+      "SendStatus.EntryRecord": 16,
+      "SendStatus.ExitRecord": 17,
+      "employeeTotal": 15,
+      "cpuInvalidCard": 14,
+      "etcInvalidCard": 13,
+      "currentValidNet.count": 12,
+      "newValidNet.starttime": 11,
+      "newValidNet.count": 11,
+      "nodeCode": 10,
+      "currentExceptionRate.value": 9,
+      "currentExceptionRate.count": 9,
+      "newExceptionRate.value": 8,
+      "newExceptionRate.starttime": 8,
+      "newExceptionRate.count": 8,
+      "currentForfeitRate.value": 7,
+      "currentForfeitRate.count": 7,
+      "newForfeitRate.value": 6,
+      "newForfeitRate.starttime": 6,
+      "newForfeitRate.count": 6,
+      "currentPassRate.value": 5,
+      "currentPassRate.count": 5,
+      "newPassRate.value": 4,
+      "newPassRate.starttime": 4,
+      "newPassRate.count": 4,
+      "LaneLibraryVersion": 2,
+      "LaneVersion": 1
+    }
+  }
+}

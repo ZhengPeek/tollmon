@@ -1,0 +1,813 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" readonly="true" id="65700f51-47c7-490a-b716-f6a30ccd0590" name="Default" comment="laneinfo渲染数据增加ConnectStatus数据项用于标识车道与后端通讯状态&#10;webSocket参数项增加心跳频率参数&#10;http:非调试时gin采用release启动&#10;     增加webSocket心跳服务&#10;     NodeChose接口更新前端已选择站点时将直接截取站点ID到前16位&#10;     push接口修复bug，上报时间取值由节点IP调整为时间&#10;     realTime模块重构，发送实时数据方法由原先的双向绑定站-webSocketClient的模式调整为获取待发送站数据后遍历webSocket队列并判断客户端是否请求该站数据后发送；取消了webSocket客户端列表状态检查功能，该功能在webSocket模块中实现；调整了发送逻辑，由并发发送改为单线程发送降低因并发锁导致的goroutine锁死；&#10;     session模块调整了去session data的断言bug；调整了更新cookie的逻辑，由创建时更新调整为访问后台即更新&#10;     webSocket模块重构，由原先的webSocket-报警策略队列，webSocket-请求站队列，webSocket-连接状态队列调整为建立webSocket-请求站-报警策略的客户端结构体以及建立客户端连接状态队列。由多个队列的维护调整为单一队列维护；由多个队列状态检查后联动模式调整为单一队列维护模式。新增心跳检测功能：当心跳发送失败后主动中断该客户端并删除，主动删除已失效的客户端实例。删除实例时将中断该实例维持的goroutine。&#10; monitor模块：&#10;     新增车道队列维护功能：心跳功能将维持车道队列中车道状态的更新，遍历车道队列中最后一次通讯时间并一次更新车道状态。当车道连接状态发送变更时将该状态发送至实时队列。&#10;     新增非本路段车道的连接将被拒绝的功能。&#10;     protocol：终止了车道心跳发送后同步到实时发送队列的功能。新增更新车道队列当前车道最后一次通讯时间的功能。&#10; main：&#10;     新增应用版本管理模块" />
+    <ignored path="log/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="tollmon" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="websocket.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/h/websocket.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="380">
+              <caret line="30" column="39" lean-forward="true" selection-start-line="30" selection-start-column="39" selection-end-line="30" selection-end-column="39" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="datastruct.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/datastruct/datastruct.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-304">
+              <caret line="17" column="1" lean-forward="true" selection-start-line="17" selection-start-column="1" selection-end-line="17" selection-end-column="1" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="tollmon.log" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/log/tollmon.log">
+          <provider selected="true" editor-type-id="LogFileEditorProvider">
+            <state relative-caret-position="-680709" />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="tollmon.log.2019.02.18" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/log/tollmon.log.2019.02.18">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file leaf-file-name="tollmon_Debug.log" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/log/tollmon_Debug.log">
+          <provider selected="true" editor-type-id="LogFileEditorProvider">
+            <state relative-caret-position="-694207" />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="monitor.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/monitor/monitor.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-38">
+              <caret line="64" column="80" lean-forward="true" selection-start-line="64" selection-start-column="80" selection-end-line="64" selection-end-column="80" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="redigo.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/redis/redigo.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="665">
+              <caret line="41" column="18" lean-forward="true" selection-start-line="41" selection-start-column="18" selection-end-line="41" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="info.go" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/h/info.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="722">
+              <caret line="45" column="11" selection-start-line="45" selection-start-column="11" selection-end-line="45" selection-end-column="11" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="684">
+              <caret line="73" column="18" lean-forward="true" selection-start-line="73" selection-start-column="18" selection-end-line="73" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="protocol.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/monitor/protocol.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1102">
+              <caret line="557" column="19" lean-forward="true" selection-start-line="557" selection-start-column="19" selection-end-line="557" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTTP Request" />
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>[]byte</find>
+      <find>byte</find>
+      <find>//</find>
+      <find>0x</find>
+      <find>b []byte</find>
+      <find>b</find>
+      <find>handle Msg</find>
+      <find>&quot;</find>
+      <find>=0x</find>
+      <find>sEMPID</find>
+      <find>,sEmpID,</find>
+      <find>&quot; //</find>
+      <find>Logger</find>
+      <find>request origin not allowed by</find>
+      <find>go</find>
+      <find>车道状态</find>
+      <find>Name</find>
+      <find>a[&quot;EmpName&quot;]</find>
+      <find>入口下班记录</find>
+      <find>&quot;,</find>
+      <find>连接</find>
+      <find>车道连接状态变更</find>
+      <find>false</find>
+      <find>stopSignal</find>
+      <find>60144</find>
+      <find>PushRealData</find>
+      <find>PushRuntimeData</find>
+      <find>getDataChan</find>
+      <find>tollmon</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>string</replace>
+      <replace>”</replace>
+      <replace>&quot; //</replace>
+      <replace>&quot;</replace>
+      <replace>mb string</replace>
+      <replace>msg.MB</replace>
+      <replace>0x</replace>
+      <replace />
+      <replace>,EmpID,</replace>
+      <replace>= 0x</replace>
+      <replace>//</replace>
+      <replace>sLaneID[0:16]</replace>
+      <replace>{&quot;</replace>
+      <replace>:true},</replace>
+      <replace>&quot;:true},</replace>
+      <replace>,</replace>
+      <replace>PushRealData</replace>
+      <replace>tollmon version</replace>
+    </replaceStrings>
+    <dirStrings>
+      <dir>D:\codespace\golang\src\tollsys\tollmon</dir>
+    </dirStrings>
+  </component>
+  <component name="GOROOT" path="C:\Go" />
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/monitor/protocol1.go" />
+        <option value="$PROJECT_DIR$/log/protocol.go" />
+        <option value="$PROJECT_DIR$/http/staticInfo.go" />
+        <option value="$PROJECT_DIR$/test/protocol1.go" />
+        <option value="$PROJECT_DIR$/http/socketio.go" />
+        <option value="$PROJECT_DIR$/http/http.go" />
+        <option value="$PROJECT_DIR$/http/runtime.go" />
+        <option value="$PROJECT_DIR$/http/websocket.go" />
+        <option value="$PROJECT_DIR$/redigo/redis-go.go" />
+        <option value="$PROJECT_DIR$/redis/redis-go.go" />
+        <option value="$PROJECT_DIR$/config/1.http" />
+        <option value="$PROJECT_DIR$/../../github.com/cihub/seelog/log.go" />
+        <option value="$PROJECT_DIR$/database/sqlserver.go" />
+        <option value="$PROJECT_DIR$/../../github.com/odbc/driver/sql.go" />
+        <option value="$PROJECT_DIR$/../../mssqlclient/sqlclientconnection.go" />
+        <option value="$PROJECT_DIR$/g/parameters.go" />
+        <option value="$PROJECT_DIR$/db/parameters.go" />
+        <option value="$PROJECT_DIR$/config/seelog_test.xml" />
+        <option value="$PROJECT_DIR$/static/test.html" />
+        <option value="$PROJECT_DIR$/h/runtime.go" />
+        <option value="$PROJECT_DIR$/config/seelog.xml" />
+        <option value="$PROJECT_DIR$/h/staticInfo.go" />
+        <option value="$PROJECT_DIR$/statics/test.html" />
+        <option value="$PROJECT_DIR$/config/strategyitems.json" />
+        <option value="$PROJECT_DIR$/db/sqlserver.go" />
+        <option value="$PROJECT_DIR$/g/logger.go" />
+        <option value="$PROJECT_DIR$/redis/redigo.go" />
+        <option value="$PROJECT_DIR$/config/config_bak.json" />
+        <option value="$PROJECT_DIR$/parameters/parameters.go" />
+        <option value="$PROJECT_DIR$/../tookit/database/sql.go" />
+        <option value="$PROJECT_DIR$/h/session.go" />
+        <option value="$PROJECT_DIR$/g/cfg.go" />
+        <option value="$PROJECT_DIR$/datastruct/datastruct.go" />
+        <option value="$PROJECT_DIR$/h/info.go" />
+        <option value="$PROJECT_DIR$/main.go" />
+        <option value="$PROJECT_DIR$/h/websocket.go" />
+        <option value="$PROJECT_DIR$/monitor/monitor.go" />
+        <option value="$PROJECT_DIR$/monitor/protocol.go" />
+        <option value="$PROJECT_DIR$/test/test.go" />
+        <option value="$PROJECT_DIR$/h/http.go" />
+        <option value="$PROJECT_DIR$/h/push.go" />
+        <option value="$PROJECT_DIR$/config/config.json" />
+        <option value="$PROJECT_DIR$/h/realtime.go" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="NodePackageJsonFileManager">
+    <packageJsonPaths />
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="26" />
+    <option name="y" value="241" />
+    <option name="width" value="1364" />
+    <option name="height" value="736" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+    <ConfirmationsSetting value="2" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="tollmon" type="b2602c69:ProjectViewProjectNode" />
+              <item name="tollmon" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="tollmon" type="b2602c69:ProjectViewProjectNode" />
+              <item name="tollmon" type="462c0819:PsiDirectoryNode" />
+              <item name="datastruct" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="tollmon" type="b2602c69:ProjectViewProjectNode" />
+              <item name="tollmon" type="462c0819:PsiDirectoryNode" />
+              <item name="h" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="tollmon" type="b2602c69:ProjectViewProjectNode" />
+              <item name="tollmon" type="462c0819:PsiDirectoryNode" />
+              <item name="log" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="tollmon" type="b2602c69:ProjectViewProjectNode" />
+              <item name="tollmon" type="462c0819:PsiDirectoryNode" />
+              <item name="monitor" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="tollmon" type="b2602c69:ProjectViewProjectNode" />
+              <item name="tollmon" type="462c0819:PsiDirectoryNode" />
+              <item name="redis" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="tollmon" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="GO_FMT" value="false" />
+    <property name="com.intellij.database.dataSource.DataSourceTemplate" value="SQL Server (Microsoft)&#10;DDL Data Source" />
+    <property name="go.gopath.indexing.explicitly.defined" value="true" />
+    <property name="go.sdk.automatically.set" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.chrisrm.idea.config" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\codespace\golang\src\tollsys\tollmon\parameters" />
+      <recent name="D:\codespace\golang\src\tollsys\tollmon\db" />
+      <recent name="D:\codespace\golang\src\tollsys\tollmon\monitor" />
+      <recent name="D:\codespace\golang\src\tollsys\tollmon\test" />
+      <recent name="D:\codespace\golang\src\tollsys\tollmon\log" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\codespace\golang\src\tollsys\tollmon\config" />
+      <recent name="D:\codespace\golang\src\tollsys\tollmon" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
+      <module name="tollmon" />
+      <working_directory value="$PROJECT_DIR$/" />
+      <go_parameters value="-i" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/main.go" />
+      <package value="tollsys/tollmon" />
+      <directory value="$PROJECT_DIR$/" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration" cleanupOnStartRun="true">
+    <configuration>C:\Users\zheng\AppData\Roaming\Subversion</configuration>
+    <supportedVersion>125</supportedVersion>
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="22" width="1936" height="1066" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="1" sideWeight="0.548803" visible="true" weight="0.14765458" />
+      <window_info anchor="bottom" id="TODO" order="12" weight="0.32460734" />
+      <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.5093333" side_tool="true" weight="0.33333334" />
+      <window_info anchor="right" id="Database" order="0" weight="0.3294621" />
+      <window_info anchor="bottom" id="Database Changes" order="0" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="4" show_stripe_button="false" sideWeight="0.4987775" weight="0.32881355" />
+      <window_info anchor="bottom" id="Run" order="8" sideWeight="0.49816626" weight="0.35583523" />
+      <window_info x="1207" y="255" width="302" height="244" id="Structure" order="2" sideWeight="0.45119706" side_tool="true" weight="0.12906666" />
+      <window_info anchor="bottom" id="Terminal" order="1" weight="0.32881355" />
+      <window_info id="Favorites" order="0" sideWeight="0.46225166" side_tool="true" weight="0.17848411" />
+      <window_info anchor="bottom" x="874" y="340" width="730" height="289" id="Debug" order="7" sideWeight="0.49066666" weight="0.5148342" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="3" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="11" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="10" weight="0.25" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="1" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="9" sideWeight="0.4987775" weight="0.33559322" />
+      <window_info anchor="bottom" id="Message" order="6" />
+      <window_info anchor="bottom" id="Messages" order="3" sideWeight="0.49938875" weight="0.32951945" />
+      <window_info anchor="bottom" id="SVN Properties" order="2" sideWeight="0.49938875" weight="0.32951945" />
+    </layout>
+    <layout-to-restore>
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.548803" visible="true" weight="0.1401919" />
+      <window_info anchor="right" x="1207" y="255" width="302" height="244" id="Structure" order="4" sideWeight="0.45119706" side_tool="true" weight="0.12906666" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="TODO" order="8" weight="0.32460734" />
+      <window_info anchor="bottom" id="Run" order="4" sideWeight="0.49816626" weight="0.35583523" />
+      <window_info anchor="bottom" id="Find" order="3" sideWeight="0.4987775" visible="true" weight="0.33559322" />
+      <window_info anchor="right" id="Database" order="3" weight="0.3294621" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.32951945" />
+      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5093333" side_tool="true" weight="0.33333334" />
+      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.4987775" weight="0.32881355" />
+      <window_info anchor="bottom" x="2150" y="707" width="730" height="289" id="Debug" order="12" sideWeight="0.49066666" type="FLOATING" weight="0.33333334" />
+      <window_info anchor="bottom" id="Message" order="2" />
+      <window_info anchor="bottom" id="Messages" order="1" sideWeight="0.49938875" weight="0.32951945" />
+      <window_info anchor="bottom" id="SVN Properties" order="0" sideWeight="0.49938875" weight="0.32951945" />
+      <window_info id="Favorites" order="1" sideWeight="0.46225166" side_tool="true" weight="0.17848411" />
+    </layout-to-restore>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="session manager&#10;log setting" />
+    <MESSAGE value="session manager : redis storage&#10;http apimiddleware : session manager&#10;config : load session config" />
+    <MESSAGE value="http:apiMiddleWare add session process&#10;runtime :websocket runtime data process&#10;session:single instance session manager &#10;websocket : optimized ws process control" />
+    <MESSAGE value="Perfect annotation&#10;New : Parameters - system runtime parameters&#10;New : datastruct -system runtime struct modify" />
+    <MESSAGE value="wesocket:Optimize process control&#10;monitor:Optimize process control&#10;logger:Optimize Log Record - add caller&#10;datastruct:Optimize struct-MsgSend" />
+    <MESSAGE value="http server : Create Version Group - v1&#10;              push - &#10;              runtime -&gt; realtime&#10;              staticinfo -&gt; info&#10;sql : tranmode&#10;datastruct : runtimedata&#10;monitor:goroutine control ; close chan" />
+    <MESSAGE value="monitor : if conn is not allow, access denied" />
+    <MESSAGE value="datastruct:strategy &#10;cfg:add logconfig&#10;logger:allow skip DEBUG log&#10;http add laneinfo strategyitem pushdata route to group v1&#10;info:implement laneinfo strategyitem pushdata handle function&#10;realtime :Functional reconstruction &#10;traveling the queue to be sent,sending data to bound webSocket&#10;    provide binding and unbinding methods&#10;session : fix bug (json unmarshal requires the address of structure)&#10;websocket :implement real data and provide heart function" />
+    <MESSAGE value="parameters:provide new method to update laneInfo" />
+    <MESSAGE value="http:Adjusted nil cookie processing middleware&#10;     push data function" />
+    <MESSAGE value="laneinfo渲染数据增加ConnectStatus数据项用于标识车道与后端通讯状态&#10;webSocket参数项增加心跳频率参数&#10;http:非调试时gin采用release启动&#10;     增加webSocket心跳服务&#10;     NodeChose接口更新前端已选择站点时将直接截取站点ID到前16位&#10;     push接口修复bug，上报时间取值由节点IP调整为时间&#10;     realTime模块重构，发送实时数据方法由原先的双向绑定站-webSocketClient的模式调整为获取待发送站数据后遍历webSocket队列并判断客户端是否请求该站数据后发送；取消了webSocket客户端列表状态检查功能，该功能在webSocket模块中实现；调整了发送逻辑，由并发发送改为单线程发送降低因并发锁导致的goroutine锁死；&#10;     session模块调整了去session data的断言bug；调整了更新cookie的逻辑，由创建时更新调整为访问后台即更新&#10;     webSocket模块重构，由原先的webSocket-报警策略队列，webSocket-请求站队列，webSocket-连接状态队列调整为建立webSocket-请求站-报警策略的客户端结构体以及建立客户端连接状态队列。由多个队列的维护调整为单一队列维护；由多个队列状态检查后联动模式调整为单一队列维护模式。新增心跳检测功能：当心跳发送失败后主动中断该客户端并删除，主动删除已失效的客户端实例。删除实例时将中断该实例维持的goroutine。&#10; monitor模块：&#10;     新增车道队列维护功能：心跳功能将维持车道队列中车道状态的更新，遍历车道队列中最后一次通讯时间并一次更新车道状态。当车道连接状态发送变更时将该状态发送至实时队列。&#10;     新增非本路段车道的连接将被拒绝的功能。&#10;     protocol：终止了车道心跳发送后同步到实时发送队列的功能。新增更新车道队列当前车道最后一次通讯时间的功能。&#10; main：&#10;     新增应用版本管理模块" />
+    <option name="LAST_COMMIT_MESSAGE" value="laneinfo渲染数据增加ConnectStatus数据项用于标识车道与后端通讯状态&#10;webSocket参数项增加心跳频率参数&#10;http:非调试时gin采用release启动&#10;     增加webSocket心跳服务&#10;     NodeChose接口更新前端已选择站点时将直接截取站点ID到前16位&#10;     push接口修复bug，上报时间取值由节点IP调整为时间&#10;     realTime模块重构，发送实时数据方法由原先的双向绑定站-webSocketClient的模式调整为获取待发送站数据后遍历webSocket队列并判断客户端是否请求该站数据后发送；取消了webSocket客户端列表状态检查功能，该功能在webSocket模块中实现；调整了发送逻辑，由并发发送改为单线程发送降低因并发锁导致的goroutine锁死；&#10;     session模块调整了去session data的断言bug；调整了更新cookie的逻辑，由创建时更新调整为访问后台即更新&#10;     webSocket模块重构，由原先的webSocket-报警策略队列，webSocket-请求站队列，webSocket-连接状态队列调整为建立webSocket-请求站-报警策略的客户端结构体以及建立客户端连接状态队列。由多个队列的维护调整为单一队列维护；由多个队列状态检查后联动模式调整为单一队列维护模式。新增心跳检测功能：当心跳发送失败后主动中断该客户端并删除，主动删除已失效的客户端实例。删除实例时将中断该实例维持的goroutine。&#10; monitor模块：&#10;     新增车道队列维护功能：心跳功能将维持车道队列中车道状态的更新，遍历车道队列中最后一次通讯时间并一次更新车道状态。当车道连接状态发送变更时将该状态发送至实时队列。&#10;     新增非本路段车道的连接将被拒绝的功能。&#10;     protocol：终止了车道心跳发送后同步到实时发送队列的功能。新增更新车道队列当前车道最后一次通讯时间的功能。&#10; main：&#10;     新增应用版本管理模块" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/h/info.go</url>
+          <line>117</line>
+          <option name="timeStamp" value="302" />
+        </line-breakpoint>
+        <line-breakpoint type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/h/http.go</url>
+          <line>96</line>
+          <option name="timeStamp" value="303" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/test/test.go</url>
+          <line>25</line>
+          <option name="timeStamp" value="307" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/h/push.go</url>
+          <line>45</line>
+          <option name="timeStamp" value="310" />
+        </line-breakpoint>
+      </breakpoints>
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <option name="time" value="314" />
+    </breakpoint-manager>
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="setValue">
+      <expression>
+        <expression-string>1</expression-string>
+        <language-id>go</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>0x01</expression-string>
+        <language-id>go</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://C:/Go/src/net/http/cookie.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="143">
+          <caret line="302" column="5" selection-start-line="302" selection-start-column="5" selection-end-line="302" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/sort/sort.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="370">
+          <caret line="221" column="43" selection-start-line="221" selection-start-column="43" selection-end-line="221" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/context/context.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="232" selection-start-line="232" selection-end-line="232" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../github.com/json-iterator/go/iter.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="172">
+          <caret line="70" column="5" selection-start-line="70" selection-start-column="5" selection-end-line="70" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../github.com/json-iterator/go/adapter.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="194">
+          <caret line="59" column="14" selection-start-line="59" selection-start-column="14" selection-end-line="59" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../github.com/json-iterator/go/config.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="682">
+          <caret line="39" column="36" selection-start-line="39" selection-start-column="36" selection-end-line="39" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../github.com/gin-gonic/gin/gin.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7040">
+          <caret line="328" selection-start-line="328" selection-end-line="328" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/net/http/server.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="39732">
+          <caret line="1829" selection-start-line="1829" selection-end-line="1829" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/seelog.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="286">
+          <caret line="13" column="82" selection-end-line="20" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/config_bak.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="10" column="4" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/time/zoneinfo.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="308">
+          <caret line="282" column="21" selection-start-line="282" selection-start-column="16" selection-end-line="282" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/time/time.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="174">
+          <caret line="641" column="5" selection-start-line="641" selection-start-column="5" selection-end-line="641" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/net/http/request.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7744">
+          <caret line="373" column="25" selection-start-line="373" selection-start-column="25" selection-end-line="373" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../github.com/gin-gonic/gin/context.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="174">
+          <caret line="43" column="18" selection-start-line="43" selection-start-column="18" selection-end-line="43" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../github.com/gorilla/websocket/conn.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1100">
+          <caret line="903" column="20" selection-start-line="903" selection-start-column="20" selection-end-line="903" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../github.com/gorilla/websocket/example_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../github.com/gorilla/websocket/examples/command/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="154">
+          <caret line="153" column="20" selection-start-line="153" selection-start-column="20" selection-end-line="153" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../github.com/gorilla/websocket/examples/autobahn/server.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4114">
+          <caret line="30" column="7" lean-forward="true" selection-start-line="30" selection-start-column="7" selection-end-line="30" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../github.com/gorilla/websocket/examples/chat/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-394" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../github.com/gorilla/websocket/examples/chat/hub.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-330" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../github.com/gorilla/websocket/examples/chat/client.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-858">
+          <caret line="61" column="18" lean-forward="true" selection-start-line="61" selection-start-column="18" selection-end-line="61" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../github.com/gorilla/websocket/client.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-5060">
+          <caret line="36" column="9" selection-start-line="36" selection-start-column="9" selection-end-line="36" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../github.com/gorilla/websocket/json.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="320">
+          <caret line="48" column="42" selection-start-line="48" selection-start-column="42" selection-end-line="48" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/runtime/panic.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="569" column="12" lean-forward="true" selection-start-line="569" selection-start-column="12" selection-end-line="569" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../tookit/database/sql.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="382">
+          <caret line="51" column="14" lean-forward="true" selection-start-line="51" selection-start-column="14" selection-end-line="51" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/log/tollmon_Error.log" />
+    <entry file="file://$PROJECT_DIR$/h/session.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3097">
+          <caret line="176" column="24" selection-start-line="176" selection-start-column="5" selection-end-line="176" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/runtime/asm_amd64.s">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="10868">
+          <caret line="572" selection-start-line="572" selection-end-line="572" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/g/logger.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="515">
+          <caret line="37" column="5" lean-forward="true" selection-start-line="37" selection-start-column="5" selection-end-line="37" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/parameters/parameters.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1710">
+          <caret line="98" column="5" selection-start-line="98" selection-start-column="5" selection-end-line="98" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/protocol1.go">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db/sqlserver.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="627">
+          <caret line="42" column="64" selection-start-line="42" selection-start-column="64" selection-end-line="42" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/g/cfg.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="25" column="34" selection-start-line="25" selection-start-column="34" selection-end-line="25" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/h/realtime.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="48" column="19" lean-forward="true" selection-start-line="48" selection-start-column="19" selection-end-line="48" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../电科市政运行核心数据服务支撑平台软件/tollmon/h/push.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="181">
+          <caret line="37" column="27" selection-start-line="37" selection-start-column="27" selection-end-line="37" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="19" column="19" selection-start-line="19" selection-start-column="19" selection-end-line="19" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/h/http.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="12" column="5" selection-start-line="12" selection-start-column="5" selection-end-line="12" selection-end-column="5" />
+          <folding>
+            <element signature="e#11#128#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/config.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="20" column="25" selection-start-line="20" selection-start-column="25" selection-end-line="20" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/h/push.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="532">
+          <caret line="36" selection-start-line="36" selection-end-line="36" />
+          <folding>
+            <element signature="e#11#151#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/h/realtime.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="950">
+          <caret line="57" selection-start-line="57" selection-end-line="57" />
+          <folding>
+            <element signature="e#11#124#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/sync/mutex.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="296">
+          <caret line="77" selection-start-line="77" selection-end-line="77" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/h/websocket.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="30" column="39" lean-forward="true" selection-start-line="30" selection-start-column="39" selection-end-line="30" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/datastruct/datastruct.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-304">
+          <caret line="17" column="1" lean-forward="true" selection-start-line="17" selection-start-column="1" selection-end-line="17" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/log/tollmon.log">
+      <provider selected="true" editor-type-id="LogFileEditorProvider">
+        <state relative-caret-position="-680709" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/log/tollmon.log.2019.02.18">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/log/tollmon_Debug.log">
+      <provider selected="true" editor-type-id="LogFileEditorProvider">
+        <state relative-caret-position="-694207" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/monitor/protocol.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1102">
+          <caret line="557" column="19" lean-forward="true" selection-start-line="557" selection-start-column="19" selection-end-line="557" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="684">
+          <caret line="73" column="18" lean-forward="true" selection-start-line="73" selection-start-column="18" selection-end-line="73" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/monitor/monitor.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-38">
+          <caret line="64" column="80" lean-forward="true" selection-start-line="64" selection-start-column="80" selection-end-line="64" selection-end-column="80" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/redis/redigo.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="665">
+          <caret line="41" column="18" lean-forward="true" selection-start-line="41" selection-start-column="18" selection-end-line="41" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/h/info.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="722">
+          <caret line="45" column="11" selection-start-line="45" selection-start-column="11" selection-end-line="45" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

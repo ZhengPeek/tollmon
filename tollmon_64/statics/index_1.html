@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Bootstrap core CSS -->
+
+
+</head>
+
+<body>
+
+  <script>
+    function ajax(url, fnSucc) {
+      if (window.XMLHttpRequest) {
+        var oAjax = new XMLHttpRequest();
+      } else {
+        var oAjax = new ActiveXObject("Microsoft.XMLHTTP"); //IE6浏览器创建ajax对象
+      }
+      oAjax.open("GET", url, true); //把要读取的参数的传过来。
+      oAjax.send();
+      oAjax.onreadystatechange = function() {
+        if (oAjax.readyState == 4) {
+          if (oAjax.status == 200) {
+            fnSucc(oAjax.responseText); //成功的时候调用这个方法
+          } else {
+            if (fnfiled) {
+              fnField(oAjax.status);
+            }
+          }
+        }
+      };
+    }
+    ajax('http://localhost:8080/v1/NodeInfo', 'get')
+  </script>
+</body>
+
+</html>

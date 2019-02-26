@@ -1,0 +1,21 @@
+<seelog type="asynctimer" asyncinterval="5000000" minlevel="trace" maxlevel="error">
+    <outputs formatid="common">
+        <console/> 
+        <buffered formatid="common" size="10000" flushperiod="1000">
+            <rollingfile type="date" filename="./log/tollmon.log" datepattern="2006.01.02" maxrolls="30"/>
+        </buffered>
+        <filter levels="error">
+            <buffered formatid="common" size="10000" flushperiod="1000">
+                <rollingfile type="date" filename="./log/tollmon_Error.log" datepattern="2006.01.02" maxrolls="30"/>
+            </buffered>
+        </filter>
+        <filter levels="debug">
+            <buffered formatid="common" size="10000" flushperiod="1000">
+                <rollingfile type="date" filename="./log/tollmon_Debug.log" datepattern="2006.01.02" maxrolls="30"/>
+            </buffered>
+        </filter>
+    </outputs>   
+    <formats>
+        <format id="common" format="%Date %Time [%LEV] %Msg%n" />
+    </formats>
+</seelog>
